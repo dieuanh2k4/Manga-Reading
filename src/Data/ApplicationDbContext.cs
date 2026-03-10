@@ -82,12 +82,33 @@ namespace backend.src.Data
                 entity.Property(a => a.Id)
                     .ValueGeneratedOnAdd()
                     .IsRequired();
-                entity.Property(a => a.ChapterId)
+                entity.Property(a => a.LastChapterId)
+                    .IsRequired();
+                entity.Property(a => a.LastPageId)
                     .IsRequired();
                 entity.Property(a => a.MangaId)
                     .IsRequired();
                 entity.Property(a => a.UserId)
                     .IsRequired();
+                entity.Property(a => a.IsCompleted)
+                    .IsRequired();
+                entity.Property(a => a.UpdateAt)
+                    .IsRequired();
+
+                entity.HasOne(a => a.Users)
+                    .WithMany(b => b.History)
+                    .HasForeignKey(a => a.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(a => a.Manga)
+                    .WithMany(b => b.History)
+                    .HasForeignKey(a => a.MangaId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(a => a.Chapter)
+                    .WithMany(b => b.History)
+                    .HasForeignKey(a => a.LastChapterId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<Libraries>(entity =>

@@ -21,6 +21,7 @@ namespace backend.src.Models
         public List<Chapters>? Chapters { get; set; }
         public List<Libraries>? Libraries { get; set; }
         public List<Ratings>? Ratings { get; set; }
+        public List<History>? History { get; set; }
         public List<Authors>? Authors { get; set; }
         public List<Genres>? Genres { get; set; }
     }

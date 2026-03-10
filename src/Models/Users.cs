@@ -17,5 +17,6 @@ namespace backend.src.Models
 
         public Libraries? Libraries { get; set; }
         public List<Ratings>? Ratings { get; set; }
+        public List<History>? History { get; set; }
     }
 }

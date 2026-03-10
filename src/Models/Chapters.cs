@@ -16,5 +16,6 @@ namespace backend.src.Models
 
         public Manga? Manga { get; set; }
         public Pages? Pages { get; set; }
+        public List<History>? History { get; set; }
     }
 }
