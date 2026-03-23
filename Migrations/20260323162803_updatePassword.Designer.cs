@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using backend.src.Data;
@@ -11,9 +12,11 @@ using backend.src.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260323162803_updatePassword")]
+    partial class updatePassword
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,9 +78,9 @@ namespace backend.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Gender")
-                        .HasMaxLength(20)
+                        .HasMaxLength(5)
                         .IsUnicode(false)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("character varying(5)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -377,9 +380,9 @@ namespace backend.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<string>("Gender")
-                        .HasMaxLength(20)
+                        .HasMaxLength(5)
                         .IsUnicode(false)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("character varying(5)");
 
                     b.Property<string>("Phone")
                         .IsRequired()

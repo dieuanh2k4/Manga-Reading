@@ -41,7 +41,7 @@ namespace backend.src.Data
                     .HasColumnType("date")
                     .IsRequired();
                 entity.Property(a => a.Gender)
-                    .HasMaxLength(5)
+                    .HasMaxLength(20)
                     .IsUnicode(false);
                 entity.Property(a => a.Address)
                     .HasMaxLength(255);
@@ -264,7 +264,7 @@ namespace backend.src.Data
                     .HasColumnType("date")
                     .IsRequired();
                 entity.Property(a => a.Gender)
-                    .HasMaxLength(5)
+                    .HasMaxLength(20)
                     .IsUnicode(false);
                 entity.Property(a => a.Address)
                     .HasMaxLength(255);
@@ -288,7 +288,7 @@ namespace backend.src.Data
                     .IsUnicode();
                 entity.Property(a => a.Password)
                     .IsRequired()
-                    .HasMaxLength(20);
+                    .HasMaxLength(255);
                 entity.Property(a => a.Role)
                     .IsRequired()
                     .HasMaxLength(20)

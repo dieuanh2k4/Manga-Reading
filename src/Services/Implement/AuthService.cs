@@ -27,7 +27,6 @@ namespace backend.src.Services.Implement
         {
             // tìm user theo username và role
             var user = await _context.Users
-                .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.UserName == request.UserName);
 
             if (user == null)
