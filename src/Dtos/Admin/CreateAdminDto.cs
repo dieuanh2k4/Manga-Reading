@@ -8,7 +8,7 @@ namespace backend.src.Dtos.Admin
     public class CreateAdminDto
     {
         public string? Name { get; set; }
-        public DateOnly Birth { get; set; }
+        public string? Birth { get; set; }
         public string? Gender { get; set; }
         public string? Email { get; set; }
         public string? Avatar { get; set; }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using backend.src.Configurations;
@@ -42,6 +43,18 @@ namespace backend.src.Services.Implement
             return admin;
         }
 
+        public async Task<string> UploadImageForAdmin(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                throw new ArgumentException("File không hợp lệ");
+            }
+
+            var filename = await _minio.UploadImageAsync(file, "AvatarAdmin");
+
+            return filename;
+        }
+
         public async Task<Admin> CreateAdmin(CreateAdminDto adminDto)
         {
             var checkUserNameAdmin = await _context.Users.FirstOrDefaultAsync(a => a.UserName == adminDto.UserName);
@@ -60,6 +73,17 @@ namespace backend.src.Services.Implement
             if (checkPhoneAdmin != null)
             {
                 throw new Result("Số điện thoại đã tồn tại");
+            }
+
+            if (string.IsNullOrWhiteSpace(adminDto.Birth))
+            {
+                throw new Result("Ngày sinh không được để trống");
+            }
+
+            var allowedFormats = new[] { "dd/MM/yyyy", "yyyy-MM-dd" };
+            if (!DateOnly.TryParseExact(adminDto.Birth, allowedFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedBirth))
+            {
+                throw new Result("Ngày sinh không hợp lệ. Vui lòng dùng dd/MM/yyyy hoặc yyyy-MM-dd");
             }
 
             if (string.IsNullOrWhiteSpace(adminDto.Password))
@@ -85,7 +109,7 @@ namespace backend.src.Services.Implement
             var newInfoAdmin = new Admin
             {
                 Name = adminDto.Name,
-                Birth = adminDto.Birth,
+                Birth = parsedBirth,
                 Gender = adminDto.Gender,
                 Email = adminDto.Email,
                 Avatar = adminDto.Avatar,
@@ -108,9 +132,20 @@ namespace backend.src.Services.Implement
                 throw new Result("Admin không tồn tại");
             }
 
+            if (string.IsNullOrWhiteSpace(adminDto.Birth))
+            {
+                throw new Result("Ngày sinh không được để trống");
+            }
+
+            var allowedFormats = new[] { "dd/MM/yyyy", "yyyy-MM-dd" };
+            if (!DateOnly.TryParseExact(adminDto.Birth, allowedFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedBirth))
+            {
+                throw new Result("Ngày sinh không hợp lệ. Vui lòng dùng dd/MM/yyyy hoặc yyyy-MM-dd");
+            }
+
             admin.Address = adminDto.Address;
             admin.Avatar = adminDto.Avatar;
-            admin.Birth = adminDto.Birth;
+            admin.Birth = parsedBirth;
             admin.Email = adminDto.Email;
             var checkEmailAdmin = await _context.Admins.FirstOrDefaultAsync(a => a.Email == adminDto.Email && a.Id != id);
             if (checkEmailAdmin != null)
@@ -178,9 +213,21 @@ namespace backend.src.Services.Implement
             return reader;
         }
 
-        public async Task<Readers> CreateReader(CreateReaderDto readerDto, string? userName, string? password)
+        public async Task<string> UploadImageForReader(IFormFile file)
         {
-            var checkUserNameReader = await _context.Users.FirstOrDefaultAsync(a => a.UserName == userName);
+            if (file == null || file.Length == 0)
+            {
+                throw new ArgumentException("File không hợp lệ");
+            }
+
+            var filename = await _minio.UploadImageAsync(file, "AvatarReader");
+
+            return filename;
+        }
+
+        public async Task<Readers> CreateReader(CreateReaderDto readerDto)
+        {
+            var checkUserNameReader = await _context.Users.FirstOrDefaultAsync(a => a.UserName == readerDto.UserName);
             if (checkUserNameReader != null)
             {
                 throw new Result("Tên đăng nhập đã tồn tại");
@@ -198,16 +245,16 @@ namespace backend.src.Services.Implement
                 throw new Result("Số điện thoại đã tồn tại");
             }
 
-            if (string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(readerDto.Password))
             {
                 throw new Result("Mật khẩu không được để trống");
             }
 
-            var hashPassword = PasswordHelper.HashPassword(password);
+            var hashPassword = PasswordHelper.HashPassword(readerDto.Password);
 
             var newUserReader = new Users
             {
-                UserName = userName,
+                UserName = readerDto.UserName,
                 Password = hashPassword,
                 Role = "Reader"
             };

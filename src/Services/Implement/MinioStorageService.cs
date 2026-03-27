@@ -20,7 +20,15 @@ namespace Server.src.Services.Implements
             _minioClient = minioClient;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
-            _bucketName = _configuration["Minio:BucketName"] ?? "cinebook";
+
+            var configuredBucket = _configuration["Minio:Bucket"] ?? _configuration["Minio:BucketName"];
+            if (string.IsNullOrWhiteSpace(configuredBucket))
+            {
+                configuredBucket = "mangazone-images";
+            }
+
+            // MinIO bucket name must be lowercase.
+            _bucketName = configuredBucket.Trim().ToLowerInvariant();
         }
 
         public async Task<string> UploadImageAsync(IFormFile file, string folder = "images")

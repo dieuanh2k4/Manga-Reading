@@ -58,9 +58,9 @@ namespace backend.src.Services.Implement
                 throw new ArgumentException("File không hợp lệ");
             }
             
-            // Upload lên MinIO với folder "authors"
-            // Trả về path để lưu vào DB: Manga/authors/abc.jpg
-            var fileName = await _minio.UploadImageAsync(file, "authors");
+            // Upload lên MinIO với folder "AvatarAuthors"
+            // Trả về path để lưu vào DB: Manga/AvatarAuthors/abc.jpg
+            var fileName = await _minio.UploadImageAsync(file, "AvatarAuthors");
 
             return fileName;
         }

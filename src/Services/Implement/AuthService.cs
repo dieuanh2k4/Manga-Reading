@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,10 +18,13 @@ namespace backend.src.Services.Implement
     {
         private readonly ApplicationDbContext _context;
         private readonly JwtHelper _jwtHelper;
-        public AuthService(ApplicationDbContext context, JwtHelper jwtHelper)
+        private readonly IMinioStorageService _minio;
+
+        public AuthService(ApplicationDbContext context, JwtHelper jwtHelper, IMinioStorageService minio)
         {
             _context = context;
             _jwtHelper = jwtHelper;
+            _minio = minio;
         }
 
         public async Task<AuthResultDto> Login(LoginRequestDto request)
@@ -52,6 +56,18 @@ namespace backend.src.Services.Implement
             return AuthResultDto.Success(response, "Đăng nhập thành công");
         }
 
+        public async Task<string> UploadImage(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                throw new ArgumentException("File không hợp lệ");
+            }
+
+            var filename = await _minio.UploadImageAsync(file, "AvatarReader");
+
+            return filename;
+        }
+
         public async Task<Users> Register(RegisterDto register)
         {
             // Validate các trường bắt buộc
@@ -59,13 +75,39 @@ namespace backend.src.Services.Implement
                 throw new Result("Tên đăng nhập không được để trống");
             if (string.IsNullOrWhiteSpace(register.Password))
                 throw new Result("Tên đăng nhập không được để trống");
-
-            // kiểm tra username
-            var checkUserName = await _context.Users
-                .FirstOrDefaultAsync(a => a.UserName == register.UserName);
-            if (checkUserName != null)
+            
+            var checkUserNameReader = await _context.Users.FirstOrDefaultAsync(a => a.UserName == register.UserName);
+            if (checkUserNameReader != null)
             {
                 throw new Result("Tên đăng nhập đã tồn tại");
+            }
+
+            var checkEmailReader = await _context.Readers.FirstOrDefaultAsync(a => a.Email == register.Email);
+            if (checkEmailReader != null)
+            {
+                throw new Result("Email đã tồn tại");
+            }
+
+            var checkPhoneReader = await _context.Readers.FirstOrDefaultAsync(a => a.Phone == register.Phone);
+            if (checkPhoneReader != null)
+            {
+                throw new Result("Số điện thoại đã tồn tại");
+            }
+
+            if (string.IsNullOrWhiteSpace(register.Password))
+            {
+                throw new Result("Mật khẩu không được để trống");
+            }
+
+            if (string.IsNullOrWhiteSpace(register.Birth))
+            {
+                throw new Result("Ngày sinh không được để trống");
+            }
+
+            var allowedFormats = new[] { "dd/MM/yyyy", "yyyy-MM-dd" };
+            if (!DateOnly.TryParseExact(register.Birth, allowedFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedBirth))
+            {
+                throw new Result("Ngày sinh không hợp lệ. Vui lòng dùng dd/MM/yyyy hoặc yyyy-MM-dd");
             }
 
             // hash password
@@ -75,13 +117,27 @@ namespace backend.src.Services.Implement
             var newUser = new Users
             {
                 UserName = register.UserName,
-                Password = register.Password,
+                Password = hashPassword,
                 Role = "Reader"
             };
 
-            newUser.Password = hashPassword;
-
             await _context.Users.AddAsync(newUser);
+            await _context.SaveChangesAsync();
+
+            var newInfoReader = new Readers
+            {
+                FullName = register.FullName,
+                Birth = parsedBirth,
+                Gender = register.Gender,
+                Email = register.Email,
+                Avatar = register.Avatar,
+                Phone = register.Phone,
+                Address = register.Address,
+                Coin = 0,
+                UserId = newUser.Id
+            };
+
+            await _context.Readers.AddAsync(newInfoReader);
             await _context.SaveChangesAsync();
 
             return newUser;

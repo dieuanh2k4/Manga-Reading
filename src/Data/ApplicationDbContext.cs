@@ -79,13 +79,11 @@ namespace backend.src.Data
                     .IsUnicode();
                 entity.Property(a => a.Title)
                     .IsRequired()
-                    .HasMaxLength(200)
+                    .HasMaxLength(1000)
                     .IsUnicode();
                 entity.Property(a => a.MangaId)
                     .IsRequired();
                 entity.Property(a => a.IsPremium)
-                    .IsRequired();
-                entity.Property(a => a.Coin)
                     .IsRequired();
                 
                 entity.HasOne(a => a.Manga)
@@ -183,6 +181,8 @@ namespace backend.src.Data
                     .IsRequired();
                 entity.Property(a => a.Rate)
                     .IsRequired();
+                entity.Property(a => a.TotalChapter)
+                    .IsRequired();
                 entity.Property(a => a.AuthorId)
                     .IsRequired();
                 entity.Property(a => a.GenreId)
@@ -258,7 +258,7 @@ namespace backend.src.Data
                     .HasMaxLength(50);
                 entity.Property(a => a.Avatar)
                     .HasMaxLength(200);
-                entity.Property(a => a.Coin)
+                entity.Property(a => a.IsPremium)
                     .IsRequired();
                 entity.Property(a => a.Birth)
                     .HasColumnType("date")

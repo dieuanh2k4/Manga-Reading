@@ -18,6 +18,7 @@ namespace backend.src.Mappers
                 Description = dto.Description,
                 Thumbnail = dto.Thumbnail,
                 Status = dto.Status,
+                TotalChapter = dto.TotalChapter,
                 Rate = dto.Rate,
                 YearRelease = dto.YearRelease,
                 DatePublish = dto.DatePublish,

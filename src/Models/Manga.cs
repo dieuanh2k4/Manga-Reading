@@ -12,6 +12,7 @@ namespace backend.src.Models
         public string? Description { get; set; }
         public string? Thumbnail { get; set; }
         public string? Status { get; set; }
+        public int TotalChapter { get; set; }
         public int Rate { get; set; }
         public int AuthorId { get; set; }
         public int GenreId { get; set; }

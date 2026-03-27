@@ -97,6 +97,9 @@ builder.Services.AddScoped<IMinioStorageService, MinioStorageService>();
 // Auth Service
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+// Chapter Service
+builder.Services.AddScoped<IChapterService, ChapterService>();
+
 var app = builder.Build();
 
 // Tự động chạy migrations khi ứng dụng khởi động
@@ -121,6 +124,16 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+
+app.MapGet("/", () =>
+{
+    if (app.Environment.IsDevelopment())
+    {
+        return Results.Redirect("/scalar/v1");
+    }
+
+    return Results.Ok(new { message = "ProjectManga API is running." });
+});
 
 app.UseAuthentication();
 

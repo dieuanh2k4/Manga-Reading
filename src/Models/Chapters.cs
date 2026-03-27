@@ -11,8 +11,7 @@ namespace backend.src.Models
         public string? ChapterNumber { get; set; }
         public int MangaId { get; set; }
         public string? Title { get; set; }
-        public Boolean IsPremium { get; set; } = false;
-        public int Coin { get; set; }
+        public bool IsPremium { get; set; } = false;
 
         public Manga? Manga { get; set; }
         public List<Pages>? Pages { get; set; }

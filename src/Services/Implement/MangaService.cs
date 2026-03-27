@@ -57,9 +57,9 @@ namespace backend.src.Services.Implement
                 throw new ArgumentException("File không hợp lệ");
             }
 
-            // Upload lên MinIO với folder "mangas"
-            // Trả về path để lưu vào DB: bucket/mangas/abc.jpg
-            var fileName = await _minio.UploadImageAsync(file, "mangas");
+            // Upload lên MinIO với folder "ThumbnailManga"
+            // Trả về path để lưu vào DB: bucket/ThumbnailManga/abc.jpg
+            var fileName = await _minio.UploadImageAsync(file, "ThumbnailManga");
 
             return fileName;
         }
@@ -94,6 +94,7 @@ namespace backend.src.Services.Implement
             dto.DatePublish = manga.DatePublish;
             dto.GenreId = manga.GenreId;
             dto.Status = manga.Status;
+            dto.TotalChapter = manga.TotalChapter;
             dto.Description = manga.Description;
             dto.Rate = manga.Rate;
             dto.Thumbnail = dto.Thumbnail;

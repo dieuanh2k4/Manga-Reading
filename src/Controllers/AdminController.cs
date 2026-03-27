@@ -172,7 +172,7 @@ namespace backend.src.Controllers
         }
 
         [HttpPost("create-reader")]
-        public async Task<IActionResult> CreateReader([FromForm] CreateReaderDto readerDto, [FromForm] string? userName, [FromForm] string? password, IFormFile? file)
+        public async Task<IActionResult> CreateReader([FromForm] CreateReaderDto readerDto, IFormFile? file)
         {
             try
             {
@@ -190,7 +190,7 @@ namespace backend.src.Controllers
                     }
                 }
 
-                var newReader = await _admin.CreateReader(readerDto, userName, password);
+                var newReader = await _admin.CreateReader(readerDto);
 
                 return Ok(new
                 {

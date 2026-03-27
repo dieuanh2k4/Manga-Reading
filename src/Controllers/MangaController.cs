@@ -73,7 +73,11 @@ namespace backend.src.Controllers
 
                 var newManga = await _mangaservice.CreateManga(dto);
 
-                return Ok(newManga);
+                return Ok(new
+                {
+                    message = "Thêm Manga thành công",
+                    data = newManga
+                });
             }
             catch (Exception ex)
             {
@@ -95,7 +99,11 @@ namespace backend.src.Controllers
 
                 var updateManga = await _mangaservice.UpdateManga(dto, id);
 
-                return Ok(updateManga);
+                return Ok(new
+                {
+                    message = "Cập nhật Manga thành công",
+                    data = updateManga
+                });
             }
             catch (Exception ex) 
             {
@@ -114,7 +122,11 @@ namespace backend.src.Controllers
                 _context.Manga.Remove(deleteManga);
                 await _context.SaveChangesAsync();
 
-                throw new Result("Xóa manga thành công");
+                return Ok(new
+                {
+                    message = "Cập nhật manga thành công",
+                    data = deleteManga
+                });
             }
             catch (Exception ex) 
             {

@@ -18,7 +18,7 @@ namespace backend.src.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IAuthService _auth;
 
-        public AuthController(ApplicationDbContext context, IAuthService auth, ILogger<AdminController> logger) : base(logger)
+        public AuthController(ApplicationDbContext context, IAuthService auth, ILogger<AuthController> logger) : base(logger)
         {
             _context = context;
             _auth = auth;
@@ -39,11 +39,21 @@ namespace backend.src.Controllers
 
         [AllowAnonymous] 
         [HttpPost("reader-register")]
-        public async Task<IActionResult> Register([FromForm] RegisterDto register)
+        public async Task<IActionResult> Register([FromForm] RegisterDto registerDto, IFormFile? imageFile = null)
         {
             try
             {
-                var newUser = await _auth.Register(register);
+                if (imageFile != null)
+                {
+                    var imageUrl = await _auth.UploadImage(imageFile);
+                    registerDto.Avatar = imageUrl;
+                }
+                else
+                {
+                    registerDto.Avatar = null;
+                }
+
+                var newUser = await _auth.Register(registerDto);
                 return Ok(new
                 {
                     message = "Đăng ký thành công",

@@ -10,6 +10,7 @@ namespace backend.src.Services.Interface
     public interface IAuthService
     {
         Task<AuthResultDto> Login(LoginRequestDto request);
+        Task<string> UploadImage(IFormFile file);
         Task<Users> Register(RegisterDto register);
     }
 }
